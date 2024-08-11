@@ -1,3 +1,60 @@
+# SAM 2 for Annotated Instances in Cubes (Vesuvius Challenge)
+
+This repository contains a fork of the **SAM 2 (Segment Anything Model 2)** project, with added functionality for fine-tuning the model on instance-annotated cubes from the Vesuvius Challenge. The fine-tuning process allows the model to better segment instances within 3D volumetric data, enhancing its performance for this specific task.
+
+## Overview
+
+**SAM 2** is a versatile segmentation model that includes various modules for tasks like feature extraction, prompt processing, mask prediction, and mask propagation in videos. This repository extends SAM 2 to work with 3D instance-annotated cubes by fine-tuning the model on this data.
+
+The instance-annotated cubes used for fine-tuning are available [here](https://dl.ash2txt.org/full-scrolls/Scroll1/PHercParis4.volpkg/seg-volumetric-labels/instance-annotated-cubes/).
+
+## Setup
+
+### 1. Install SAM 2
+
+First, follow the [official SAM 2 README](https://github.com/facebookresearch/segment-anything-2) to install the base SAM 2 model.
+There are a couple more python packages that you might need, like `pynrrd`.
+
+
+### 2. Prepare the Annotated Cubes
+
+Download the instance-annotated cubes from the Vesuvius Challenge and organize them into a directory, such as `finished-cubes/` or `instance-annotated-cubes/`. Update the path in the `train.py` script accordingly:
+
+```python
+cube_folder = Path("/your/custom/path/finished-cubes")  # Update with your path
+```
+
+## Fine-Tuning Process
+
+### 1. Fine-Tuning the Model
+
+The `train.py` script is designed to fine-tune the `prompt-encoding` and `mask-decoder` modules of SAM 2 on the annotated cubes. Here’s how it works:
+
+- **Data Preparation**: The 3D cubes are sliced into 2D images along the axes.
+- **Sampling Points**: A single point is randomly sampled within an instance in each slice.
+- **Mask Prediction**: SAM 2's image predictor, given the raw image slice and the sampled point, generates a mask for the pointed instance.
+- **Module Fine-Tuning**: The prompt-encoding and mask-decoder modules are fine-tuned based on these predictions.
+
+My checkpoint reached 0.65 IoU on the training set, haven't checked on the validation set. You can surely do better.
+
+### 2. Generating New Instance-Annotated Cubes
+
+After fine-tuning, you can generate new instance-annotated cubes using the `inference_cube.ipynb` notebook:
+
+- **Loading Weights**: Load the original SAM 2 weights and the fine-tuned weights.
+- **Frame Slicing**: The `read_image` function saves a `.jpg` image for each frame of a cube (z-slices).
+- **Mask Propagation**: Initialize the SAM video predictor with masks for the first and last frames, then propagate the mask through the other frames to create a fully annotated cube.
+
+## References and Additional Resources
+
+This fine-tuning approach is inspired by [this SAM 2 fork](https://github.com/sagieppel/fine-tune-train_segment_anything_2_in_60_lines_of_code) and the accompanying [Medium blog post](https://medium.com/@sagieppel/train-fine-tune-segment-anything-2-sam-2-in-60-lines-of-code-928dd29a63b3) by the fork's author.
+
+For further guidance, check out the [official SAM 2 tutorials](https://github.com/facebookresearch/segment-anything-2/tree/main/notebooks) provided by Meta.
+
+---
+
+Feel free to customize this further to match your style or add more details as needed. This version should be more structured and easier to follow for anyone looking to understand and use your project.
+
 # SAM 2: Segment Anything in Images and Videos
 
 **[AI at Meta, FAIR](https://ai.meta.com/research/)**
