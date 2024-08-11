@@ -51,10 +51,6 @@ This fine-tuning approach is inspired by [this SAM 2 fork](https://github.com/sa
 
 For further guidance, check out the [official SAM 2 tutorials](https://github.com/facebookresearch/segment-anything-2/tree/main/notebooks) provided by Meta.
 
----
-
-Feel free to customize this further to match your style or add more details as needed. This version should be more structured and easier to follow for anyone looking to understand and use your project.
-
 # SAM 2: Segment Anything in Images and Videos
 
 **[AI at Meta, FAIR](https://ai.meta.com/research/)**
